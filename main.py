@@ -1,30 +1,45 @@
 import pygame
+from Block import Block
+from Map import Map
+import constants as C
+import copy
+from State import *
 
 # init
 pygame.init()
-
-# create the screen
-screen = pygame.display.set_mode((800, 600))
 
 # set title
 pygame.display.set_caption("Thang love Trang")
 icon = pygame.image.load("imgs/icon.png")
 pygame.display.set_icon(icon)
 
-# player
-playerImg = pygame.image.load("imgs/spider.png")
-playerX = 370
-playerY = 420
-playerX_change = 0
-playerY_change = 0
+# state of the game
+state = state1
 
-def player(x, y):
-    screen.blit(playerImg, (x, y))
+# setting map
+cell_map = pygame.image.load("imgs/map.png")
+hole_map = pygame.image.load("imgs/hole.png")
+matrix = state.matrix
+map = Map(cell_map, hole_map, matrix)
+
+# setting block
+init_status = state.init_status
+init_fst_point = state.init_fst_point
+init_snd_point = state.init_snd_point
+block_standing = pygame.image.load("imgs/block_standing.png")
+block_lying = pygame.image.load("imgs/block_lying.png")
+block = Block(init_status, block_standing, block_lying, copy.copy(init_fst_point), copy.copy(init_snd_point))
+
+# create the screen
+screen = pygame.display.set_mode((map.width * C.CELL_SIZE, map.height * C.CELL_SIZE))
 
 # start game
 running = True
 while running:
-    screen.fill((128, 255, 0))
+    screen.fill((255, 255, 255))
+
+    map.draw(screen)
+    block.draw(screen)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -32,21 +47,17 @@ while running:
 
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_LEFT:
-                playerX_change = -0.3
+                block.move_left()
             if event.key == pygame.K_RIGHT:
-                playerX_change = 0.3
+                block.move_right()
             if event.key == pygame.K_UP:
-                playerY_change = -0.3
+                block.move_up()
             if event.key == pygame.K_DOWN:
-                playerY_change = 0.3
+                block.move_down()
 
-        if event.type == pygame.KEYUP:
-            if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
-                playerX_change = 0
-            if event.key == pygame.K_UP or event.key == pygame.K_DOWN:
-                playerY_change = 0
+    if map.impact(block) == True:
+        block.status = init_status
+        block.fst_point = copy.copy(init_fst_point)
+        block.snd_point = copy.copy(init_snd_point)
 
-    playerX += playerX_change
-    playerY += playerY_change
-    player(playerX, playerY)
     pygame.display.update()
