@@ -1,10 +1,14 @@
+import time
 import pygame
-
+import constants as C
+from Map import Map
+from Block import Block
+from Point import Point
 # init
 pygame.init()
 
 # create the screen
-screen = pygame.display.set_mode((800, 600))
+
 
 # set title
 pygame.display.set_caption("Thang love Trang")
@@ -13,18 +17,28 @@ pygame.display.set_icon(icon)
 
 # player
 playerImg = pygame.image.load("imgs/spider.png")
-playerX = 370
-playerY = 420
+
 playerX_change = 0
 playerY_change = 0
 
-def player(x, y):
-    screen.blit(playerImg, (x, y))
+# SCREEN = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
+
+
 
 # start game
+bs = C.BLOCK_SIZE
+map = Map(C.map)
+screen = pygame.display.set_mode((map.getHeight()*bs, map.getWidth()*bs))
+map.draw(screen)
+X = map.getInitial().x*bs
+Y = map.getInitial().y*bs
 running = True
-while running:
-    screen.fill((128, 255, 0))
+block = Block( playerImg,Point(X, Y),)
+
+while running:   
+    screen.fill(C.GREEN)
+    map.draw(screen)   
+    block.draw(screen)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -32,21 +46,13 @@ while running:
 
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_LEFT:
-                playerX_change = -0.3
+                block.move_left()
             if event.key == pygame.K_RIGHT:
-                playerX_change = 0.3
+                block.move_right()
             if event.key == pygame.K_UP:
-                playerY_change = -0.3
+                block.move_up() 
             if event.key == pygame.K_DOWN:
-                playerY_change = 0.3
+                block.move_down()
 
-        if event.type == pygame.KEYUP:
-            if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
-                playerX_change = 0
-            if event.key == pygame.K_UP or event.key == pygame.K_DOWN:
-                playerY_change = 0
-
-    playerX += playerX_change
-    playerY += playerY_change
-    player(playerX, playerY)
     pygame.display.update()
+    
