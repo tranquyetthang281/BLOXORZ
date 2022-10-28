@@ -1,9 +1,11 @@
+import time
 import pygame
 from Block import Block
 from Map import Map
 import constants as C
 import copy
 from State import *
+from dfs import DepthFirstSearch
 
 # init
 pygame.init()
@@ -34,13 +36,18 @@ block = Block(init_status, block_standing, block_lying, copy.copy(init_fst_point
 screen = pygame.display.set_mode((map.width * C.CELL_SIZE, map.height * C.CELL_SIZE))
 
 # start game
+dfs = DepthFirstSearch(map)
+success, solution = dfs.solve(block)
+i = 0
 running = True
 while running:
     screen.fill((255, 255, 255))
-
+    if i < len(solution):
+        block = solution[i]
+        i += 1
     map.draw(screen)
     block.draw(screen)
-
+    time.sleep(0.5)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -55,9 +62,9 @@ while running:
             if event.key == pygame.K_DOWN:
                 block.move_down()
 
-    if map.impact(block) == True:
-        block.status = init_status
-        block.fst_point = copy.copy(init_fst_point)
-        block.snd_point = copy.copy(init_snd_point)
+#     # if map.impact(block) == True:
+#     #     block.status = init_status
+#     #     block.fst_point = copy.copy(init_fst_point)
+#     #     block.snd_point = copy.copy(init_snd_point)
 
     pygame.display.update()
