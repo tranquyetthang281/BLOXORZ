@@ -1,20 +1,17 @@
-from collections import deque
+import copy
 from Block import Block
 from Map import Map
 
 
-def print_stack(st):
-    for b in st:
-        print(b, end = ' ')
-    print()
-
 class DepthFirstSearch:
+
     def __init__(self, map: Map) -> None:
         self.stack = []
         self.path = dict()
         self.visited = set()
         self.solution = []
         self.map = map 
+        self.moves = ["move_left", "move_right", "move_up", "move_down"]
 
     def solve(self, src : Block) :
         self.stack.append(src)
@@ -29,41 +26,35 @@ class DepthFirstSearch:
                         u = self.path[u.encode()]
                     else:
                         break
-                print_stack(solution)
-                return True, list(reversed(solution))
+                    
+                solution.reverse()
+                self.print_stack(solution)
+                return True, list(solution)
 
-            prev_state = u.deepcopy()
-            cur = u
-            done = False
-            print('-left')
-            temp = cur.move_left(self.map)
-            self.sub_process(prev_state, temp)
-
-            print('--right')
-            temp = cur.move_right(self.map)
-            self.sub_process(prev_state, temp) 
-
-            print('---up')
-            temp = cur.move_up(self.map)
-            self.sub_process(prev_state, temp)
-
-            print('---down')
-            temp = cur.move_down(self.map)
-            self.sub_process(prev_state, temp)
-            if done:
-                return True, self.solution
+            prev_state = copy.deepcopy(u)
+            
+            for move_name in self.moves:
+                print(move_name, end = "---\n")
+                move = getattr(Block, move_name)
+                move(u)
+                if not self.is_failed(u):
+                    encode = u.encode()
+                    if encode not in self.visited:
+                        self.stack.append(u)
+                        self.path[encode] = prev_state
+                        self.visited.add(encode)
+                u = copy.deepcopy(prev_state)
 
         return False, []
 
-    def sub_process(self, prev_state, v):
-        success = not (prev_state.encode() == v.encode())
-        # print("sub process:",self.visited)
-        encode = v.encode()
-        if success and (encode not in self.visited):
-            self.stack.append(v)
-            self.path[encode] = prev_state 
-            self.visited.add(encode)
-        # return False
-
     def is_goal(self, block):
-        return self.map.impact(block) == 2
+        return self.map.won_the_game(block)
+
+    def is_failed(self, block):
+        return self.map.block_out_map(block) or self.map.block_felt(block)
+
+    @staticmethod
+    def print_stack(st):
+        for b in st:
+            print(b, end=' ')
+        print()

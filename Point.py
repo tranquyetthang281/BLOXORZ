@@ -5,6 +5,3 @@ class Point:
     
     def __str__(self):
         return str(self.x) + str(self.y)
-    
-    def deepcopy(self):
-        return Point(self.x, self.y)

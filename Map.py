@@ -24,24 +24,29 @@ class Map:
             pnt.x = 0    
             pnt.y += 1
     
-    def inMap(self, point):
-        return (0 <= point.x  and point.x < self.width) and (0 <= point.y and point.y < self.height) 
+    def point_in_map(self, point):
+        return (0 <= point.x and point.x < self.width) and (0 <= point.y and point.y < self.height)
 
-    def impact(self, block):
-        if not self.inMap(block.fst_point) or not self.inMap(block.snd_point):
+    def block_out_map(self, block):
+        if not self.point_in_map(block.fst_point) or not self.point_in_map(block.snd_point):
             print("Your Block Got Out The Map !!!")
-            return 0
+            return True
+        return False
 
-        fst_block_fell = self.matrix[block.fst_point.y][block.fst_point.x] == 0
-        snd_block_fell = self.matrix[block.snd_point.y][block.snd_point.x] == 0
-        if fst_block_fell or snd_block_fell:
+    def block_felt(self, block):
+        fst_point_fell = self.matrix[block.fst_point.y][block.fst_point.x] == 0
+        snd_point_fell = self.matrix[block.snd_point.y][block.snd_point.x] == 0
+        if fst_point_fell or snd_point_fell:
             print("Your Block Fell !!!")
-            return 0
-        
-        won_the_game = self.matrix[block.fst_point.y][block.fst_point.x] == 2 and \
-                        block.status == Block.STANDING
+            return True
+        return False
+
+    def won_the_game(self, block):
+        won_the_game = self.matrix[block.fst_point.y][block.fst_point.x] == 2 and block.status == Block.STANDING
         if won_the_game:
             print("You Won <--(^_^)-->")
-            return 2
+            return True
+        return False
 
-        return 1
+    def impact(self, block):
+        return self.block_out_map(block) or self.block_felt(block) or self.won_the_game(block)
