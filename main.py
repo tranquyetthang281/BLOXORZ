@@ -63,7 +63,7 @@ while running:
                     block.move_up()
                 if event.key == pygame.K_DOWN:
                     block.move_down()
-                    
+
     if MODE == C.MANUAL_MODE:
         if map.impact(block) == True:
             block.status = init_status
@@ -75,6 +75,5 @@ while running:
             block = solution[i]
             i += 1
         time.sleep(0.5)
-    
 
     pygame.display.update()

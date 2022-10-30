@@ -1,17 +1,15 @@
-import copy
+from Solution import Solution
 from Block import Block
 from Map import Map
+import copy
 
-
-class DepthFirstSearch:
+class DepthFirstSearch(Solution):
 
     def __init__(self, map: Map) -> None:
+        super().__init__(map)
         self.stack = []
         self.path = dict()
         self.visited = set()
-        self.solution = []
-        self.map = map 
-        self.moves = ["move_left", "move_right", "move_up", "move_down"]
 
     def solve(self, src : Block) :
         self.stack.append(src)
@@ -46,15 +44,3 @@ class DepthFirstSearch:
                 u = copy.deepcopy(prev_state)
 
         return False, []
-
-    def is_goal(self, block):
-        return self.map.won_the_game(block)
-
-    def is_failed(self, block):
-        return self.map.block_out_map(block) or self.map.block_felt(block)
-
-    @staticmethod
-    def print_stack(st):
-        for b in st:
-            print(b, end=' ')
-        print()
