@@ -6,9 +6,10 @@ import constants as C
 import copy
 from State import *
 from DFS import DepthFirstSearch
+from GeneticAlgorithm import GeneticAlgorithm
 
 # Set up MODE 
-MODE = C.DFS_MODE
+MODE = C.MANUAL_MODE
 
 # init
 pygame.init()
@@ -19,7 +20,7 @@ icon = pygame.image.load("imgs/icon.png")
 pygame.display.set_icon(icon)
 
 # state of the game
-state = stateDemo
+state = state1
 
 # setting map
 cell_map = pygame.image.load("imgs/map.png")
@@ -39,6 +40,10 @@ screen = pygame.display.set_mode((map.width * C.CELL_SIZE, map.height * C.CELL_S
 # DFS set up
 dfs = DepthFirstSearch(map)
 success, solution = dfs.solve(copy.deepcopy(block))
+
+# GA set up
+ga = GeneticAlgorithm(map)
+_, solution2 = ga.solve(copy.deepcopy(block))
 
 # start game
 i = 1
@@ -75,5 +80,12 @@ while running:
             block = solution[i]
             i += 1
         time.sleep(0.5)
+
+    if MODE == C.GA_MODE:
+        if i < len(solution2):
+            block = solution2[i]
+            i += 1
+        time.sleep(0.5)
+
 
     pygame.display.update()

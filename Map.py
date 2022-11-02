@@ -50,3 +50,6 @@ class Map:
 
     def impact(self, block):
         return self.block_out_map(block) or self.block_felt(block) or self.won_the_game(block)
+
+    def hole_point(self):
+        
