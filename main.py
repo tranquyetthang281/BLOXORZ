@@ -19,7 +19,7 @@ icon = pygame.image.load("imgs/icon.png")
 pygame.display.set_icon(icon)
 
 # state of the game
-state = state1
+state = stateDemo
 
 # setting map
 cell_map = pygame.image.load("imgs/map.png")
